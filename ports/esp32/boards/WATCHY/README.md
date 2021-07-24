@@ -40,7 +40,9 @@ with the watch's hardware.
 ## Supported hardware features (in order of approximate priority)
 
 * [x] ESP32 capabilities (thanks to MicroPython's `GENERIC` board build!)
-* [ ] E-ink display (GDEH0154D67)
+* [ ] E-ink display ([GDEH0154D67](doc/reference/GDEH0154D67-0111.pdf))
+  * It turns out the GxEPD2 library is GPLv3, which is a hard incompatibility
+    with MicroPython's MIT license.
 * [ ] Hardware buttons
 * [ ] Real-time controller (RTC) (DS3231MZ)
   * My Watchy was one of the [unlucky few](https://github.com/sqfmi/Watchy/issues/40#issuecomment-873029971)

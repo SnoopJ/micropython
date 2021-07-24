@@ -1,0 +1,119 @@
+"""
+Watchy e-ink display driver
+
+(extremely WIP)
+"""
+
+from machine import Pin, SoftSPI
+import micropython
+import time
+
+# NOTE: these are GPIO pin numbers (i.e. IOxx on the Watchy sheet)
+# Most pins initialized to HIGH
+PIN_SCK = Pin(22, Pin.OUT, value=1)
+PIN_SDA = Pin(21, Pin.OUT, value=1)
+
+PIN_CS   = Pin(5, Pin.OUT, value=1)
+PIN_DC   = Pin(10, Pin.OUT, value=1)
+PIN_RES  = Pin(9, Pin.OUT, value=1)
+PIN_BUSY = Pin(19, Pin.IN, value=1)
+
+# Give me native code and try to make it zippy
+@micropython.viper
+def _write_byte(b: int):
+    # Ported from SPI_Write() in the demo ESP32 app
+    for _ in range(8):
+        PIN_SCK.off()
+        time.sleep(0.001)
+        if b & 0b1000_0000:
+            PIN_SDA.on()
+        else:
+            PIN_SDA.off()
+        b = b << 1
+        time.sleep(0.001)
+        PIN_SCK.on()
+        time.sleep(0.001)
+
+
+def write(cmd: int, data: list):
+    wait_for_EPD()
+    PIN_CS.off()
+    PIN_DC.off()
+    _write_byte(cmd)
+    PIN_DC.on()
+    for b in data:
+        _write_byte(b)
+    PIN_CS.on()
+
+def panel_reset():
+    # Panel Reset
+    PIN_RES.off()
+    time.sleep(0.200)
+    PIN_RES.on()
+    time.sleep(0.200)
+
+    write(cmd=0x12, data=[])
+
+
+def wait_for_EPD():
+    while True:
+        if not PIN_BUSY.value():
+            break
+        else:
+            print("Waiting for PIN_BUSY")
+            time.sleep(0.01)
+    # print("Done waiting for PIN_BUSY")
+
+
+def send_init_code():
+    # Init Code
+    write(cmd=0x01, data=[0xC7, 0x00, 0x00])
+    time.sleep(0.01)
+
+
+def EPD_update():
+    print("Performing screen update")
+    write(cmd=0x22, data=[0xF7])
+    write(cmd=0x20, data=[])
+    wait_for_EPD()
+
+
+def EPD_partial_update():
+    print("Performing screen partial update")
+    write(cmd=0x22, data=[0xFF])
+    write(cmd=0x20, data=[])
+    wait_for_EPD()
+
+
+def fill(val):
+    if val != 0x00 and val != 0x01:
+        raise ValueError("val must be 0x00 or 0x01")
+    
+    print("Performing screen fill (val={val})".format(val=val))
+    write(cmd=0x24, data=(0x00 for _ in range(250*25)))
+    EPD_update()
+
+print("PIN_BUSY: ", PIN_BUSY.value())
+panel_reset()
+print("PIN_BUSY: ", PIN_BUSY.value())
+send_init_code()
+print("PIN_BUSY: ", PIN_BUSY.value())
+wait_for_EPD()
+
+# comments below as they are in sample
+write(cmd=0x11, data=[0x01])        # data entry mode
+write(cmd=0x44, data=[0x00, 0x18])              # set Ram-X address start/end
+                                                # 0x0C --> (18+1)*8 = 200
+write(cmd=0x45, data=[0xC7, 0x00, 0x00, 0x00])  # set Ram-Y address start/end
+                                                # 0xC7 --> (199+1) = 200
+write(cmd=0x3C, data=[0x05])  # BorderWavefrom
+write(cmd=0x18, data=[0x80])  # Reading temperature sensor
+write(cmd=0x4E, data=[0x00])        # set RAM x address count to 0
+write(cmd=0x4F, data=[0xC7, 0x00])  # set RAM y address count to 199
+wait_for_EPD()
+
+write(cmd=0x24, data=[0x01]*100)
+time.sleep(0.1)
+write(cmd=0x24, data=[0x00]*100)
+time.sleep(0.1)
+write(cmd=0x24, data=[0x01]*100)
