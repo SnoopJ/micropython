@@ -27,6 +27,8 @@
 #include "mphalport.h"
 
 #include <stdio.h>
+#include <time.h>
+#include <sys/time.h>
 
 void mp_hal_stdout_tx_strn(const char *str, size_t len) {
     fwrite(str, len, 1, stdout);
@@ -44,20 +46,39 @@ void mp_hal_delay_us(mp_uint_t us) {
     }
 }
 
-mp_uint_t mp_hal_ticks_us(void) {
-    // TODO:write a real impl
-    return 0;
-}
-
+// snoopj: these timers taken from the unix port
+#ifndef mp_hal_ticks_ms
 mp_uint_t mp_hal_ticks_ms(void) {
-    // TODO:write a real impl
+    #if (defined(_POSIX_TIMERS) && _POSIX_TIMERS > 0) && defined(_POSIX_MONOTONIC_CLOCK)
+    struct timespec tv;
+    clock_gettime(CLOCK_MONOTONIC, &tv);
+    return tv.tv_sec * 1000 + tv.tv_nsec / 1000000;
+    #else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    #endif
+}
+#endif
+
+#ifndef mp_hal_ticks_us
+mp_uint_t mp_hal_ticks_us(void) {
+    #if (defined(_POSIX_TIMERS) && _POSIX_TIMERS > 0) && defined(_POSIX_MONOTONIC_CLOCK)
+    struct timespec tv;
+    clock_gettime(CLOCK_MONOTONIC, &tv);
+    return tv.tv_sec * 1000000 + tv.tv_nsec / 1000;
+    #else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000000 + tv.tv_usec;
+    #endif
+}
+#endif
+
+mp_uint_t mp_hal_ticks_cpu() {
     return 0;
 }
 
-mp_uint_t mp_hal_ticks_cpu(void) {
-    // TODO:write a real impl
-    return 0;
-}
 
 extern int mp_interrupt_char;
 
