@@ -1,3 +1,4 @@
+include wasmenv.mk
 include ../../py/mkenv.mk
 
 CROSS = 0
@@ -7,8 +8,8 @@ QSTR_DEFS = qstrdefsport.h
 include $(TOP)/py/py.mk
 include $(TOP)/extmod/extmod.mk
 
-CC = emcc
-LD = emcc
+CC = $(EMCC)
+LD = $(EMCC)
 
 INC += -I.
 INC += -I$(TOP)
@@ -44,6 +45,8 @@ all: $(BUILD)/micropython.wasm
 
 $(BUILD)/micropython.wasm: $(OBJ)
 	$(MKDIR) -p $(BUILD)/wasm
-	$(Q)emcc $(LDFLAGS) -o $(BUILD)/wasm/micropython.wasm $(OBJ)
+	$(Q)$(EMCC) $(LDFLAGS) -o $(BUILD)/wasm/micropython.wasm $(OBJ)
 
 include $(TOP)/py/mkrules.mk
+include Makefile.wasm2c
+

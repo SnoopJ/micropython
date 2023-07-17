@@ -1,0 +1,3 @@
+
+// snoopj
+u32 Z_micropythonZ__start(Z_micropython_instance_t* instance);

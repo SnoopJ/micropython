@@ -1,0 +1,20 @@
+WASM2C_CFLAGS = -Os
+WASM2C_CFLAGS += -Wl,-s  # strip symbols
+WASM2C_INC += -Iwasm_runtime/ -I$(BUILD)/wasm/ -I$(UVWASI_ROOT)/include -I$(WABT_ROOT)/wasm2c -I$(WABT_ROOT)/third_party/uvwasi/include/
+WASM2C_LIBPATHS = -L$(UVWASI_ROOT)/build/_deps/libuv-build -L$(UVWASI_ROOT)/build
+WASM2C_LIBS = -luvwasi_a -luv_a -lpthread -ldl -lm
+
+WASM_RT_SRC = \
+	wasm_runtime/wasm-rt-impl.c \
+	wasm_runtime/uvwasi-rt.c \
+	wasm_runtime/uvwasi-rt-main.c
+
+$(BUILD)/wasm/micropython.wasm.c: $(BUILD)/micropython.wasm
+	$(WASM2C) --enable-exceptions $(BUILD)/wasm/micropython.wasm -o $(BUILD)/wasm/micropython.wasm.c
+	# snoopj - this is a stupid hack
+	sed -i -e "s/w2c_e0\([^_]\)/w2c_e0_0\1/g" $(BUILD)/wasm/micropython.wasm.c
+	cat wasm_runtime/micropython.wasm.c.patch >> $(BUILD)/wasm/micropython.wasm.c
+	cat wasm_runtime/micropython.wasm.h.patch >> $(BUILD)/wasm/micropython.wasm.h
+
+$(BUILD)/micropython.so: $(BUILD)/wasm/micropython.wasm.c
+	$(WASM2C_CC) $(WASM2C_CFLAGS) -shared -fPIC -o $(BUILD)/micropython.so $(BUILD)/wasm/micropython.wasm.c $(WASM_RT_SRC) $(WASM2C_INC) $(WASM2C_LIBPATHS) $(WASM2C_LIBS)
