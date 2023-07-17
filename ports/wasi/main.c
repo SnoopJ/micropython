@@ -139,15 +139,13 @@ MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
 #endif
 
 void nlr_jump_fail(void *val) {
-    while (1) {
-        ;
-    }
+    printf("nlr_jump_fail!\n");
+    abort();
 }
 
 void NORETURN __fatal_error(const char *msg) {
-    while (1) {
-        ;
-    }
+    printf("__fatal_error! msg = '%s'\n", msg);
+    abort();
 }
 
 #ifndef NDEBUG
