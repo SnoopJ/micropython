@@ -55,7 +55,7 @@
 #define MICROPY_USE_INTERNAL_ERRNO  (1)
 #define MICROPY_USE_INTERNAL_PRINTF (0)
 #define MICROPY_VFS_POSIX           (MICROPY_VFS)
-#define MICROPY_PY_SYS_PLATFORM     "webassembly"
+#define MICROPY_PY_SYS_PLATFORM     "WebAssembly"
 #define MICROPY_PY_SYS_STDFILES     (0)
 
 #define MICROPY_EVENT_POLL_HOOK \
@@ -87,7 +87,7 @@ typedef unsigned mp_uint_t; // must be pointer size
 typedef long mp_off_t;
 
 #define MICROPY_HW_BOARD_NAME "WASI"
-#define MICROPY_HW_MCU_NAME "WASI"
+#define MICROPY_HW_MCU_NAME "wasm2c"
 
 #define MP_STATE_PORT MP_STATE_VM
 
