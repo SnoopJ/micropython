@@ -43,7 +43,7 @@ LDFLAGS += -sSUPPORT_LONGJMP=wasm -fwasm-exceptions -sFILESYSTEM=0
 all: $(BUILD)/micropython.wasm
 
 $(BUILD)/micropython.wasm: $(OBJ)
-	$(ECHO) "LINK $(BUILD)/firmware.wasm"
-	$(Q)emcc $(LDFLAGS) -o $(BUILD)/firmware.wasm $(OBJ)
+	$(MKDIR) -p $(BUILD)/wasm
+	$(Q)emcc $(LDFLAGS) -o $(BUILD)/wasm/micropython.wasm $(OBJ)
 
 include $(TOP)/py/mkrules.mk
