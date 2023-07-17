@@ -31,11 +31,13 @@
 
 #include "py/builtin.h"
 #include "py/compile.h"
-#include "py/runtime.h"
-#include "py/repl.h"
 #include "py/gc.h"
 #include "py/mperrno.h"
 #include "py/obj.h"
+#include "py/repl.h"
+#include "py/runtime.h"
+#include "py/stackctrl.h"
+
 #include "extmod/vfs.h"
 #include "extmod/vfs_posix.h"
 #include "shared/runtime/pyexec.h"
@@ -45,11 +47,9 @@
 
 #if MICROPY_ENABLE_COMPILER
 int EMSCRIPTEN_KEEPALIVE do_str(const char *src, mp_parse_input_kind_t input_kind) {
-//     printf("do_str()\n");
-//     printf("src: '%s' @ %p\n", src, src);
-
     int ret = 0;
     nlr_buf_t nlr;
+
     if (nlr_push(&nlr) == 0) {
         mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, src, strlen(src), 0);
         qstr source_name = lex->source_name;
@@ -108,10 +108,6 @@ void mp_wasi_init_repl() {
     pyexec_event_repl_init();
 }
 
-// STATIC void gc_scan_func(void *begin, void *end) {
-//     gc_collect_root((void **)begin, (void **)end - (void **)begin + 1);
-// }
-
 void EMSCRIPTEN_KEEPALIVE *mp_alloc_wasi(size_t n_bytes, unsigned int alloc_flags)
 {
     return gc_alloc(n_bytes, alloc_flags);
@@ -162,10 +158,9 @@ static char warehouse[4096];
 char* EMSCRIPTEN_KEEPALIVE warehouse_addr() { return warehouse; }
 
 
-// snoopj - dummy main
 int EMSCRIPTEN_KEEPALIVE main()
 {
-    printf("Initializing MicroPython\n");
+//     printf("Initializing MicroPython\n");
     mp_wasi_init(1048576);
     mp_stack_ctrl_init();
 
