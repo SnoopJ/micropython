@@ -81,3 +81,6 @@ Misc. Notes
   components.
 * If you would like to debug the WASM build with a C debugger, add
   `--profiling-funcs` to the Emscripten invocation to preserve function names.
+* The lifetime of the WASM module is not controlled particularly closely in
+  the custom runtime. In particular, the module and runtime are never freed or
+  deinitialized. See `wasm_runtime/uvwasi-rt-main.c` for details.

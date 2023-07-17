@@ -83,8 +83,10 @@ int main(int argc, const char** argv)
     module_start(MODULE_NAME, &global_instance);
 
 
-//     module_free(MODULE_NAME, &global_instance);
+// TODO: currently the global module is never freed, so that mp_do_str() can be called from Python
+// In practice, this isn't a problem since the WASM module's lifetime is associated with its own process
 
+//     module_free(MODULE_NAME, &global_instance);
 //     uvwasi_destroy(&global_uvwasi_state);
 //     wasm_rt_free();
 
