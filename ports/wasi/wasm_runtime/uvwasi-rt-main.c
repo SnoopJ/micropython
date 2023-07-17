@@ -36,7 +36,6 @@ u32 mp_do_str(const char* src)
     u32 len = strlen(src) + 1;  // 1 extra for the null terminator
     u32 addr = Z_micropythonZ_warehouse_addr(&global_instance);
     wasm_rt_memcpy(&global_instance.w2c_memory.data[addr], src, len);
-//         printf("src from w2c_memory (@%p): %s\n", (void*)addr, &instance.w2c_memory.data[addr]);
 
     u32 result = Z_micropythonZ_do_str(&global_instance, addr, (u32)1 /* MP_PARSE_FILE_INPUT */);
 
@@ -81,15 +80,8 @@ int main(int argc, const char** argv)
 
     module_init(MODULE_NAME);
     module_instantiate(MODULE_NAME, &global_instance, (struct Z_wasi_snapshot_preview1_instance_t *) &global_wasi_state);
-//     printf("module_start()\n");
     module_start(MODULE_NAME, &global_instance);
-//     printf("\n---\n\n");
 
-    // snoopj
-//     printf("global_instance.w2c_g0 = %d\n", global_instance.w2c_g0);  // emscripten ??
-//     printf("global_instance.w2c_g1 = %d\n", global_instance.w2c_g1);  // emscripten ??
-//     printf("global_instance.w2c_g2 = %d\n", global_instance.w2c_g2);  // emscripten end
-//     printf("global_instance.w2c_g3 = %d\n", global_instance.w2c_g3);  // emscripten base
 
 //     module_free(MODULE_NAME, &global_instance);
 
