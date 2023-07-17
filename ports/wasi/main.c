@@ -160,7 +160,6 @@ char* EMSCRIPTEN_KEEPALIVE warehouse_addr() { return warehouse; }
 
 int EMSCRIPTEN_KEEPALIVE main()
 {
-//     printf("Initializing MicroPython\n");
     mp_wasi_init(1048576);
     mp_stack_ctrl_init();
 
