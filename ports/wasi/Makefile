@@ -15,9 +15,8 @@ INC += -I$(TOP)
 INC += -I$(BUILD)
 
 CFLAGS += -std=c99 -Wall -Werror -Wdouble-promotion -Wfloat-conversion
-CFLAGS += -Os -DNDEBUG
+CFLAGS += -Os
 CFLAGS += $(INC)
-# snoopj
 CFLAGS += -sSUPPORT_LONGJMP=wasm -fwasm-exceptions
 
 SRC_SHARED = $(addprefix shared/,\
