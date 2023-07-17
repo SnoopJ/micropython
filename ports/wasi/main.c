@@ -167,6 +167,10 @@ int EMSCRIPTEN_KEEPALIVE main()
 {
     printf("Initializing MicroPython\n");
     mp_wasi_init(1048576);
+    mp_stack_ctrl_init();
+
+    mp_uint_t stack_limit = 40000 * (sizeof(void *) / 4);  // snoopj: borrowed from unix port
+    mp_stack_set_limit(stack_limit);
 
     return 0;
 }
