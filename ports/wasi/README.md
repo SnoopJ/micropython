@@ -28,8 +28,8 @@ Dependencies
 Building
 --------
 
-Before building, edit the paths in [`wasmenv.mk`](wasmenv.mk) to locate the
-dependencies listed above.
+Before building, copy [`wasmenv.mk.example`](wasmenv.mk.example) to `wasmenv.mk`
+and edit the paths therein to locate the dependencies listed above.
 
 ### WASM only
 
