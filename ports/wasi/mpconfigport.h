@@ -55,6 +55,14 @@
 #define MICROPY_USE_INTERNAL_ERRNO  (1)
 #define MICROPY_USE_INTERNAL_PRINTF (0)
 #define MICROPY_VFS_POSIX           (MICROPY_VFS)
+// NOTE:snoopj:this is not cryptographically secure, but WASI does not provide
+// a useful getrandom() and this is an expedient way to get the expected behavior
+#define MICROPY_PY_RANDOM_SEED_INIT_FUNC time(NULL)
+
+#ifdef MICROPY_PY_RANDOM_SEED_INIT_FUNC
+#include <time.h>
+#endif
+
 #define MICROPY_PY_SYS_PLATFORM     "WebAssembly"
 #define MICROPY_PY_SYS_STDFILES     (0)
 
