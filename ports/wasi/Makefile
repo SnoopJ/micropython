@@ -5,6 +5,8 @@ CROSS = 0
 
 QSTR_DEFS = qstrdefsport.h
 
+FROZEN_MANIFEST ?= manifest.py
+
 include $(TOP)/py/py.mk
 include $(TOP)/extmod/extmod.mk
 
