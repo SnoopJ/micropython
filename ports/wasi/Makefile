@@ -42,6 +42,7 @@ OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 
 LDFLAGS += --no-entry
 LDFLAGS += -sSUPPORT_LONGJMP=wasm -fwasm-exceptions -sFILESYSTEM=0
+LDFLAGS += -g
 
 all: $(BUILD)/micropython.wasm
 
